@@ -328,6 +328,34 @@ app.get('/api/export', async (req, res) => {
     ws.getCell(r, 1).value = 'Note: B/L - Breakage/Leakage, EXP - Expiry, Unsaleable';
     ws.getCell(r, 1).font = { italic: true, size: 9, name: 'Arial', color: { argb: 'FF666666' } };
 
+    // ── Export Second Sheet: Raw Data ────────────────────────
+    const wsRaw = workbook.addWorksheet('Raw Data');
+    wsRaw.columns = [
+      { header: 'Submitted At', key: 'date', width: 20 },
+      { header: 'Shop Name', key: 'shop', width: 30 },
+      { header: 'Town', key: 'town', width: 25 },
+      { header: 'Claim Type', key: 'type', width: 15 },
+      { header: 'Material Code', key: 'code', width: 15 },
+      { header: 'Material Name', key: 'name', width: 40 },
+      { header: 'Quantity (Pkts)', key: 'qty', width: 15 }
+    ];
+    wsRaw.getRow(1).font = { bold: true };
+    
+    for (const row of rows) {
+      const items = JSON.parse(row.items);
+      for (const item of items) {
+        wsRaw.addRow({
+          date: row.submitted_at,
+          shop: row.shop_name,
+          town: row.town,
+          type: row.claim_type,
+          code: item.code,
+          name: item.name,
+          qty: item.quantity
+        });
+      }
+    }
+
     // ── Save to temp file & send ─────────────────────────────
     const fs = require('fs');
     const tmpDir = path.join(__dirname, 'tmp');
