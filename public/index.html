@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="MTR Foods Distributor - Retailer Damage & Expiry Claims Manager">
+  <meta name="theme-color" content="#B71C1C">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>MTR Claims Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ══════════════════════════════════════════════════════════
+       DESIGN TOKENS
+       ══════════════════════════════════════════════════════════ */
+    :root {
+      --red-900: #7F0000;
+      --red-800: #B71C1C;
+      --red-700: #C62828;
+      --red-600: #D32F2F;
+      --red-100: #FFCDD2;
+      --gold-600: #FFB300;
+      --gold-500: #FFC107;
+      --gold-300: #FFE082;
+      --gold-100: #FFF8E1;
+      --green-700: #2E7D32;
+      --green-600: #388E3C;
+      --green-100: #E8F5E9;
+      --green-50: #F1F8E9;
+      --blue-700: #1565C0;
+      --blue-100: #BBDEFB;
+      --purple-700: #6A1B9A;
+      --orange-700: #E65100;
+      --bg: #F5F5F5;
+      --surface: #FFFFFF;
+      --surface-alt: #FAFAFA;
+      --text-primary: #1A1A2E;
+      --text-secondary: #5F6368;
+      --text-hint: #9E9E9E;
+      --border: #E0E0E0;
+      --radius: 14px;
+      --radius-lg: 20px;
+      --radius-pill: 50px;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,.06);
+      --shadow-md: 0 4px 20px rgba(0,0,0,.1);
+      --shadow-lg: 0 8px 40px rgba(0,0,0,.15);
+      --transition: .25s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       RESET & BASE
+       ══════════════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    input, select, button, textarea { font-family: inherit; }
+    button { cursor: pointer; border: none; background: none; }
+
+    /* ══════════════════════════════════════════════════════════
+       SCREEN SYSTEM
+       ══════════════════════════════════════════════════════════ */
+    .screen {
+      display: none;
+      min-height: 100dvh;
+      animation: fadeSlideIn .35s var(--transition) both;
+    }
+    .screen.active { display: flex; flex-direction: column; }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       TOP BAR
+       ══════════════════════════════════════════════════════════ */
+    .topbar {
+      background: linear-gradient(135deg, var(--red-800), var(--red-700));
+      color: #fff;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 3px 12px rgba(183,28,28,.3);
+    }
+    .topbar .back-btn {
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 22px; border-radius: 12px;
+      transition: background var(--transition);
+    }
+    .topbar .back-btn:hover { background: rgba(255,255,255,.15); }
+    .topbar h1 { font-size: 17px; font-weight: 600; flex: 1; }
+
+    /* ══════════════════════════════════════════════════════════
+       HOME SCREEN
+       ══════════════════════════════════════════════════════════ */
+    #home {
+      background: linear-gradient(160deg, var(--red-900), var(--red-800) 40%, var(--red-700));
+      justify-content: center;
+      align-items: center;
+      padding: 32px 24px;
+      text-align: center;
+      color: #fff;
+    }
+    .home-logo {
+      font-size: 52px;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,.3));
+    }
+    .home-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -.5px;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .home-brand {
+      font-size: 13px;
+      opacity: .7;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .home-subtitle {
+      font-size: 14px;
+      opacity: .65;
+      margin-bottom: 40px;
+      line-height: 1.5;
+    }
+    .home-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+      max-width: 340px;
+    }
+    .home-btn {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      border-radius: var(--radius-lg);
+      font-size: 17px;
+      font-weight: 600;
+      color: #fff;
+      text-align: left;
+      transition: transform var(--transition), box-shadow var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .home-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.15), transparent);
+      pointer-events: none;
+    }
+    .home-btn:active { transform: scale(.97); }
+    .home-btn .icon { font-size: 32px; flex-shrink: 0; }
+    .home-btn .label span { display: block; font-size: 12px; font-weight: 400; opacity: .75; margin-top: 2px; }
+    .btn-retailer { background: linear-gradient(135deg, var(--green-700), #43A047); box-shadow: 0 4px 20px rgba(46,125,50,.4); }
+    .btn-distributor { background: linear-gradient(135deg, var(--blue-700), #1976D2); box-shadow: 0 4px 20px rgba(21,101,192,.4); }
+    .home-footer { margin-top: 48px; font-size: 11px; opacity: .4; }
+
+    /* ══════════════════════════════════════════════════════════
+       FORM ELEMENTS
+       ══════════════════════════════════════════════════════════ */
+    .form-body { padding: 24px 20px; flex: 1; overflow-y: auto; }
+    .form-group { margin-bottom: 22px; }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 16px;
+      color: var(--text-primary);
+      background: var(--surface);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      -webkit-appearance: none;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--red-700);
+      box-shadow: 0 0 0 3px rgba(198,40,40,.12);
+    }
+    .form-input::placeholder { color: var(--text-hint); }
+
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--red-800), var(--red-600));
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 16px rgba(183,28,28,.3);
+      transition: transform var(--transition), box-shadow var(--transition);
+      min-height: 52px;
+    }
+    .btn-primary:active { transform: scale(.98); }
+    .btn-primary:disabled { opacity: .5; pointer-events: none; }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 14px;
+      background: var(--surface);
+      color: var(--red-700);
+      font-size: 15px;
+      font-weight: 600;
+      border: 2px solid var(--red-700);
+      border-radius: var(--radius);
+      transition: all var(--transition);
+      min-height: 50px;
+    }
+    .btn-secondary:active { background: var(--red-100); }
+
+    /* ══════════════════════════════════════════════════════════
+       CLAIM TYPE SELECTOR
+       ══════════════════════════════════════════════════════════ */
+    .claim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      padding: 24px 20px;
+      flex: 1;
+    }
+    .claim-card {
+      padding: 24px 16px;
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--border);
+      background: var(--surface);
+      text-align: center;
+      transition: all var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      min-height: 120px;
+      justify-content: center;
+    }
+    .claim-card .emoji { font-size: 36px; }
+    .claim-card .claim-label { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .claim-card.selected {
+      border-color: var(--red-700);
+      background: linear-gradient(135deg, rgba(198,40,40,.06), rgba(198,40,40,.02));
+      box-shadow: 0 0 0 3px rgba(198,40,40,.12);
+    }
+    .claim-card:active { transform: scale(.96); }
+
+    /* ══════════════════════════════════════════════════════════
+       PRODUCT SELECTION
+       ══════════════════════════════════════════════════════════ */
+    .search-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 12px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-pill);
+      font-size: 15px;
+      background: var(--surface-alt);
+    }
+    .search-bar input:focus {
+      outline: none;
+      border-color: var(--red-700);
+    }
+    .selected-badge {
+      background: var(--red-700);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      white-space: nowrap;
+      min-width: 44px;
+      text-align: center;
+    }
+
+    .product-list { flex: 1; overflow-y: auto; padding: 8px 16px 100px; }
+    .category-header {
+      padding: 10px 4px 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--red-700);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 2px solid var(--red-100);
+      margin-top: 12px;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 5;
+    }
+    .product-item {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      margin: 6px 0;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1.5px solid var(--border);
+      gap: 10px;
+      transition: all var(--transition);
+    }
+    .product-item.has-qty {
+      border-color: var(--green-600);
+      background: var(--green-50);
+      box-shadow: 0 2px 8px rgba(46,125,50,.1);
+    }
+    .product-info { flex: 1; min-width: 0; }
+    .product-code { font-size: 10px; color: var(--text-hint); font-weight: 600; letter-spacing: .5px; }
+    .product-name { font-size: 13px; font-weight: 500; line-height: 1.3; color: var(--text-primary); }
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .qty-btn {
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 12px;
+      font-size: 22px;
+      font-weight: 700;
+      transition: all var(--transition);
+      color: var(--text-secondary);
+      background: var(--surface-alt);
+      border: 1.5px solid var(--border);
+    }
+    .qty-btn:active { transform: scale(.92); }
+    .qty-btn.minus { color: var(--red-700); }
+    .qty-btn.plus { color: var(--green-700); background: var(--green-100); border-color: var(--green-600); }
+    .qty-value {
+      min-width: 36px;
+      text-align: center;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .qty-value.active { color: var(--green-700); }
+
+    .fab-review {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      left: 20px;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--red-800), var(--red-600));
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      z-index: 200;
+      animation: slideUp .3s ease both;
+    }
+    .fab-review.show { display: flex; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       REVIEW SCREEN
+       ══════════════════════════════════════════════════════════ */
+    .review-header {
+      padding: 20px;
+      background: var(--gold-100);
+      border-bottom: 1px solid var(--gold-300);
+    }
+    .review-header p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+    .review-header h2 { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+
+    .review-list { padding: 16px 20px; flex: 1; overflow-y: auto; }
+    .review-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+    }
+    .review-item .name { font-size: 14px; font-weight: 500; flex: 1; }
+    .review-item .qty {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--green-700);
+      background: var(--green-100);
+      padding: 4px 14px;
+      border-radius: var(--radius-pill);
+    }
+    .review-actions {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       SUCCESS SCREEN
+       ══════════════════════════════════════════════════════════ */
+    #success { justify-content: center; align-items: center; padding: 40px 32px; text-align: center; }
+    .success-check {
+      width: 100px; height: 100px;
+      background: var(--green-100);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 52px;
+      margin-bottom: 24px;
+      animation: popIn .5s ease both;
+    }
+    @keyframes popIn {
+      0%   { transform: scale(0); }
+      60%  { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+    #success h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    #success p { color: var(--text-secondary); margin-bottom: 32px; line-height: 1.6; }
+
+    /* ══════════════════════════════════════════════════════════
+       DISTRIBUTOR LOGIN
+       ══════════════════════════════════════════════════════════ */
+    #dist-login {
+      background: linear-gradient(160deg, #0D1B2A, #1B2838, #1565C0);
+      justify-content: center;
+      align-items: center;
+      padding: 32px 24px;
+      text-align: center;
+      color: #fff;
+    }
+    #dist-login .lock-icon { font-size: 52px; margin-bottom: 16px; }
+    #dist-login h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    #dist-login p { font-size: 14px; opacity: .6; margin-bottom: 32px; }
+    .login-box {
+      width: 100%;
+      max-width: 340px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .login-box input {
+      padding: 16px;
+      border: 2px solid rgba(255,255,255,.2);
+      border-radius: var(--radius);
+      font-size: 16px;
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+    .login-box input::placeholder { color: rgba(255,255,255,.3); letter-spacing: 0; }
+    .login-box input:focus { outline: none; border-color: var(--gold-500); }
+    .btn-login {
+      padding: 16px;
+      background: linear-gradient(135deg, var(--gold-600), var(--gold-500));
+      color: #1A1A2E;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: var(--radius);
+      transition: transform var(--transition);
+      min-height: 52px;
+    }
+    .btn-login:active { transform: scale(.98); }
+    .login-error {
+      color: #FF5252;
+      font-size: 13px;
+      font-weight: 500;
+      min-height: 20px;
+    }
+    .login-back {
+      margin-top: 16px;
+      color: rgba(255,255,255,.5);
+      font-size: 14px;
+      text-decoration: underline;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       DASHBOARD
+       ══════════════════════════════════════════════════════════ */
+    .dash-body { flex: 1; overflow-y: auto; padding: 16px 16px 32px; }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      padding: 16px;
+      border-radius: var(--radius);
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: -20px; right: -20px;
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.1);
+    }
+    .stat-card .stat-num { font-size: 28px; font-weight: 800; line-height: 1; }
+    .stat-card .stat-label { font-size: 11px; opacity: .8; margin-top: 4px; text-transform: uppercase; letter-spacing: .5px; }
+    .stat-retailers { background: linear-gradient(135deg, #1565C0, #1976D2); }
+    .stat-packets { background: linear-gradient(135deg, var(--green-700), #43A047); }
+    .stat-products { background: linear-gradient(135deg, var(--purple-700), #8E24AA); }
+    .stat-submissions { background: linear-gradient(135deg, var(--orange-700), #EF6C00); }
+
+    .dash-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      padding-top: 8px;
+    }
+
+    .export-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+    .export-card .export-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .export-card .form-label { margin-bottom: 6px; font-size: 11px; }
+    .export-card .form-input { padding: 12px; font-size: 14px; border-radius: 10px; }
+    .btn-export {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--green-700), #43A047);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 16px rgba(46,125,50,.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 52px;
+      transition: transform var(--transition);
+    }
+    .btn-export:active { transform: scale(.98); }
+
+    .submission-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition);
+    }
+    .submission-card:active { transform: scale(.99); }
+    .sub-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .sub-shop { font-size: 15px; font-weight: 600; }
+    .sub-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      color: #fff;
+    }
+    .badge-Expiry { background: var(--orange-700); }
+    .badge-Breakage { background: var(--red-600); }
+    .badge-Unsaleable { background: var(--purple-700); }
+    .badge-Others { background: var(--text-secondary); }
+    .sub-meta { font-size: 12px; color: var(--text-hint); margin-bottom: 6px; }
+    .sub-items { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+    .sub-items strong { color: var(--text-primary); }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-hint);
+    }
+    .empty-state .emoji { font-size: 48px; margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; }
+
+    /* ══════════════════════════════════════════════════════════
+       LOADING OVERLAY
+       ══════════════════════════════════════════════════════════ */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      backdrop-filter: blur(4px);
+    }
+    .loading-overlay.show { display: flex; }
+    .loading-box {
+      background: var(--surface);
+      padding: 32px 40px;
+      border-radius: var(--radius-lg);
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 4px solid var(--border);
+      border-top-color: var(--red-700);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-box p { font-size: 14px; color: var(--text-secondary); font-weight: 500; }
+
+    /* ══════════════════════════════════════════════════════════
+       TOAST
+       ══════════════════════════════════════════════════════════ */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--text-primary);
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 10000;
+      opacity: 0;
+      transition: all .35s ease;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ══════════════════════════════════════════════════════════
+       UTILITY
+       ══════════════════════════════════════════════════════════ */
+    .gap-12 { gap: 12px; }
+    .mt-auto { margin-top: auto; }
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════════ HOME SCREEN ══════════════ -->
+  <div id="home" class="screen active">
+    <div class="home-logo">🍛</div>
+    <div class="home-brand">Govardhan Agencies</div>
+    <div class="home-title">MTR Claims<br>Manager</div>
+    <div class="home-subtitle">Damage & Expiry Claims Portal<br>for MTR Foods Retailers</div>
+    <div class="home-buttons">
+      <button class="home-btn btn-retailer" onclick="showScreen('retailer-info')" id="btn-retailer">
+        <span class="icon">🏪</span>
+        <span class="label">Retailer<span>Submit a new claim</span></span>
+      </button>
+      <button class="home-btn btn-distributor" onclick="showScreen('dist-login')" id="btn-distributor">
+        <span class="icon">📊</span>
+        <span class="label">Distributor<span>View dashboard & export</span></span>
+      </button>
+    </div>
+    <div class="home-footer">Arsikere &bull; Since 2024</div>
+  </div>
+
+  <!-- ══════════════ RETAILER INFO ══════════════ -->
+  <div id="retailer-info" class="screen">
+    <div class="topbar">
+      <button class="back-btn" onclick="showScreen('home')">←</button>
+      <h1>Retailer Details</h1>
+    </div>
+    <div class="form-body">
+      <div class="form-group">
+        <label class="form-label" for="inp-shop">Shop Name</label>
+        <input class="form-input" id="inp-shop" type="text" placeholder="e.g. Sri Lakshmi Stores" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inp-town">Town</label>
+        <input class="form-input" id="inp-town" type="text" placeholder="e.g. Arsikere" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inp-date">Claim Date</label>
+        <input class="form-input" id="inp-date" type="date">
+      </div>
+      <div style="margin-top: auto; padding-top: 24px;">
+        <button class="btn-primary" onclick="goToClaimType()" id="btn-next-info">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ CLAIM TYPE ══════════════ -->
+  <div id="claim-type" class="screen">
+    <div class="topbar">
+      <button class="back-btn" onclick="showScreen('retailer-info')">←</button>
+      <h1>Claim Type</h1>
+    </div>
+    <div class="claim-grid">
+      <button class="claim-card" data-type="Expiry" onclick="selectClaim(this)" id="claim-expiry">
+        <span class="emoji">📅</span>
+        <span class="claim-label">Expiry</span>
+      </button>
+      <button class="claim-card" data-type="Breakage" onclick="selectClaim(this)" id="claim-breakage">
+        <span class="emoji">💔</span>
+        <span class="claim-label">Breakage /<br>Leakage</span>
+      </button>
+      <button class="claim-card" data-type="Unsaleable" onclick="selectClaim(this)" id="claim-unsaleable">
+        <span class="emoji">🚫</span>
+        <span class="claim-label">Unsaleable</span>
+      </button>
+      <button class="claim-card" data-type="Others" onclick="selectClaim(this)" id="claim-others">
+        <span class="emoji">📦</span>
+        <span class="claim-label">Others</span>
+      </button>
+    </div>
+    <div style="padding: 0 20px 24px;">
+      <button class="btn-primary" onclick="goToProducts()" id="btn-next-claim" disabled>Select Products →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════ PRODUCT SELECTION ══════════════ -->
+  <div id="product-select" class="screen">
+    <div class="topbar">
+      <button class="back-btn" onclick="showScreen('claim-type')">←</button>
+      <h1>Select Products</h1>
+    </div>
+    <div class="search-bar">
+      <input type="text" id="product-search" placeholder="🔍 Search products..." oninput="filterProducts()">
+      <div class="selected-badge" id="selected-count">0</div>
+    </div>
+    <div class="product-list" id="product-list"></div>
+    <button class="fab-review" id="fab-review" onclick="goToReview()">
+      Review Selection →
+    </button>
+  </div>
+
+  <!-- ══════════════ REVIEW ══════════════ -->
+  <div id="review" class="screen">
+    <div class="topbar">
+      <button class="back-btn" onclick="showScreen('product-select')">←</button>
+      <h1>Review Claim</h1>
+    </div>
+    <div class="review-header">
+      <h2 id="review-title"></h2>
+      <p id="review-meta"></p>
+    </div>
+    <div class="review-list" id="review-list"></div>
+    <div class="review-actions pb-safe">
+      <button class="btn-primary" onclick="submitClaim()" id="btn-submit">✓ Submit Claim</button>
+      <button class="btn-secondary" onclick="showScreen('product-select')">← Edit Products</button>
+    </div>
+  </div>
+
+  <!-- ══════════════ SUCCESS ══════════════ -->
+  <div id="success" class="screen">
+    <div class="success-check">✅</div>
+    <h2>Claim Submitted!</h2>
+    <p id="success-msg">Your claim has been recorded successfully.<br>The distributor will process it soon.</p>
+    <button class="btn-primary" onclick="resetAndGoHome()" style="max-width:300px;">← Back to Home</button>
+  </div>
+
+  <!-- ══════════════ DISTRIBUTOR LOGIN ══════════════ -->
+  <div id="dist-login" class="screen">
+    <div class="lock-icon">🔐</div>
+    <h2>Distributor Access</h2>
+    <p>Enter password to view dashboard</p>
+    <div class="login-box">
+      <input type="password" id="inp-password" placeholder="Password" onkeydown="if(event.key==='Enter')loginDistributor()">
+      <button class="btn-login" onclick="loginDistributor()" id="btn-login">Unlock Dashboard</button>
+      <div class="login-error" id="login-error"></div>
+      <button class="login-back" onclick="showScreen('home')">← Back to Home</button>
+    </div>
+  </div>
+
+  <!-- ══════════════ DASHBOARD ══════════════ -->
+  <div id="dashboard" class="screen">
+    <div class="topbar">
+      <button class="back-btn" onclick="showScreen('home')">←</button>
+      <h1>📊 Dashboard</h1>
+    </div>
+    <div class="dash-body">
+      <div class="stats-row">
+        <div class="stat-card stat-retailers">
+          <div class="stat-num" id="stat-retailers">0</div>
+          <div class="stat-label">Retailers</div>
+        </div>
+        <div class="stat-card stat-packets">
+          <div class="stat-num" id="stat-packets">0</div>
+          <div class="stat-label">Total Pkts</div>
+        </div>
+        <div class="stat-card stat-products">
+          <div class="stat-num" id="stat-products">0</div>
+          <div class="stat-label">Product Lines</div>
+        </div>
+        <div class="stat-card stat-submissions">
+          <div class="stat-num" id="stat-submissions">0</div>
+          <div class="stat-label">Submissions</div>
+        </div>
+      </div>
+
+      <div class="dash-section-title">📥 Export Excel</div>
+      <form class="export-card" action="/api/export" method="GET" id="export-form" onsubmit="appendPassword()">
+        <input type="hidden" name="password" id="export-pw-hidden">
+        <div class="export-fields">
+          <div>
+            <label class="form-label" for="exp-date">Date</label>
+            <input class="form-input" id="exp-date" name="date" type="date">
+          </div>
+          <div>
+            <label class="form-label" for="exp-sl">SL No.</label>
+            <input class="form-input" id="exp-sl" name="sl_no" type="text" value="1" placeholder="1">
+          </div>
+        </div>
+        <button type="submit" class="btn-export" id="btn-download">
+          <span>📄</span> Download MTR Excel
+        </button>
+      </form>
+
+      <div class="dash-section-title">📋 All Submissions</div>
+      <div id="submissions-list"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════ LOADING OVERLAY ══════════════ -->
+  <div class="loading-overlay" id="loading">
+    <div class="loading-box">
+      <div class="spinner"></div>
+      <p id="loading-text">Submitting...</p>
+    </div>
+  </div>
+
+  <!-- ══════════════ TOAST ══════════════ -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    /* ═══════════════════════════════════════════════════════════
+       STATE
+       ═══════════════════════════════════════════════════════════ */
+    let allProducts = [];             // flat array: { code, name, category }
+    let quantities = {};              // code → qty
+    let claimData = {                 // current claim being built
+      shop_name: '',
+      town: '',
+      claim_date: '',
+      claim_type: ''
+    };
+    let distPassword = '';            // stored after login
+
+    /* ═══════════════════════════════════════════════════════════
+       INIT
+       ═══════════════════════════════════════════════════════════ */
+    (async function init() {
+      // Set today's date as default
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('inp-date').value = today;
+      document.getElementById('exp-date').value = today;
+
+      // Load products
+      try {
+        const res = await fetch('/api/products');
+        const categories = await res.json();
+        allProducts = [];
+        for (const cat of categories) {
+          for (const p of cat.products) {
+            allProducts.push({ ...p, category: cat.name });
+          }
+        }
+        renderProducts(categories);
+      } catch (e) {
+        console.error('Failed to load products:', e);
+      }
+    })();
+
+    /* ═══════════════════════════════════════════════════════════
+       NAVIGATION
+       ═══════════════════════════════════════════════════════════ */
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       RETAILER FLOW
+       ═══════════════════════════════════════════════════════════ */
+    function goToClaimType() {
+      const shop = document.getElementById('inp-shop').value.trim();
+      const town = document.getElementById('inp-town').value.trim();
+      const date = document.getElementById('inp-date').value;
+      if (!shop || !town || !date) {
+        toast('Please fill all fields');
+        return;
+      }
+      claimData.shop_name = shop;
+      claimData.town = town;
+      claimData.claim_date = date;
+      showScreen('claim-type');
+    }
+
+    function selectClaim(el) {
+      document.querySelectorAll('.claim-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      claimData.claim_type = el.dataset.type;
+      document.getElementById('btn-next-claim').disabled = false;
+    }
+
+    function goToProducts() {
+      if (!claimData.claim_type) { toast('Select a claim type'); return; }
+      // Reset quantities
+      quantities = {};
+      updateSelectedCount();
+      rerenderQuantities();
+      showScreen('product-select');
+      document.getElementById('product-search').value = '';
+      filterProducts();
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       PRODUCT LIST RENDERING
+       ═══════════════════════════════════════════════════════════ */
+    let categoriesCache = [];
+
+    function renderProducts(categories) {
+      categoriesCache = categories;
+      const container = document.getElementById('product-list');
+      let html = '';
+      for (const cat of categories) {
+        html += `<div class="category-header" data-cat="${cat.name}">${cat.name}</div>`;
+        for (const p of cat.products) {
+          const q = quantities[p.code] || 0;
+          html += `
+            <div class="product-item${q > 0 ? ' has-qty' : ''}" id="item-${p.code}" data-code="${p.code}" data-name="${p.name}" data-cat="${cat.name}">
+              <div class="product-info">
+                <div class="product-code">${p.code}</div>
+                <div class="product-name">${p.name}</div>
+              </div>
+              <div class="qty-controls">
+                <button class="qty-btn minus" onclick="changeQty('${p.code}',-1)" aria-label="Decrease">−</button>
+                <div class="qty-value${q > 0 ? ' active' : ''}" id="qty-${p.code}">${q}</div>
+                <button class="qty-btn plus" onclick="changeQty('${p.code}',1)" aria-label="Increase">+</button>
+              </div>
+            </div>`;
+        }
+      }
+      container.innerHTML = html;
+    }
+
+    function changeQty(code, delta) {
+      const current = quantities[code] || 0;
+      const newVal = Math.max(0, current + delta);
+      if (newVal === 0) delete quantities[code];
+      else quantities[code] = newVal;
+
+      // Update UI
+      const el = document.getElementById(`qty-${code}`);
+      const item = document.getElementById(`item-${code}`);
+      if (el) {
+        el.textContent = newVal;
+        el.classList.toggle('active', newVal > 0);
+      }
+      if (item) item.classList.toggle('has-qty', newVal > 0);
+      updateSelectedCount();
+    }
+
+    function updateSelectedCount() {
+      const count = Object.keys(quantities).length;
+      document.getElementById('selected-count').textContent = count;
+      const fab = document.getElementById('fab-review');
+      fab.classList.toggle('show', count > 0);
+    }
+
+    function rerenderQuantities() {
+      for (const p of allProducts) {
+        const q = quantities[p.code] || 0;
+        const el = document.getElementById(`qty-${p.code}`);
+        const item = document.getElementById(`item-${p.code}`);
+        if (el) {
+          el.textContent = q;
+          el.classList.toggle('active', q > 0);
+        }
+        if (item) item.classList.toggle('has-qty', q > 0);
+      }
+    }
+
+    function filterProducts() {
+      const q = document.getElementById('product-search').value.toLowerCase().trim();
+      const container = document.getElementById('product-list');
+      const items = container.querySelectorAll('.product-item');
+      const headers = container.querySelectorAll('.category-header');
+
+      // Track visible categories
+      const visibleCats = new Set();
+
+      items.forEach(item => {
+        const name = item.dataset.name.toLowerCase();
+        const code = item.dataset.code.toLowerCase();
+        const cat = item.dataset.cat;
+        const match = !q || name.includes(q) || code.includes(q);
+        item.style.display = match ? 'flex' : 'none';
+        if (match) visibleCats.add(cat);
+      });
+
+      headers.forEach(h => {
+        h.style.display = visibleCats.has(h.dataset.cat) ? 'block' : 'none';
+      });
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       REVIEW
+       ═══════════════════════════════════════════════════════════ */
+    function goToReview() {
+      const selected = allProducts.filter(p => quantities[p.code] > 0);
+      if (selected.length === 0) { toast('Select at least one product'); return; }
+
+      document.getElementById('review-title').textContent = `${claimData.claim_type} Claim`;
+      document.getElementById('review-meta').textContent =
+        `${claimData.shop_name} • ${claimData.town} • ${claimData.claim_date}`;
+
+      let html = '';
+      let totalPkts = 0;
+      for (const p of selected) {
+        const q = quantities[p.code];
+        totalPkts += q;
+        html += `
+          <div class="review-item">
+            <div class="name">${p.name}</div>
+            <div class="qty">${q} pkt${q > 1 ? 's' : ''}</div>
+          </div>`;
+      }
+      html += `
+        <div class="review-item" style="background:var(--gold-100); border-color:var(--gold-300);">
+          <div class="name" style="font-weight:700;">Total</div>
+          <div class="qty" style="background:var(--gold-600); color:#fff;">${totalPkts} pkts</div>
+        </div>`;
+      document.getElementById('review-list').innerHTML = html;
+      showScreen('review');
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SUBMIT
+       ═══════════════════════════════════════════════════════════ */
+    async function submitClaim() {
+      const items = allProducts
+        .filter(p => quantities[p.code] > 0)
+        .map(p => ({ code: p.code, name: p.name, category: p.category, quantity: quantities[p.code] }));
+
+      if (items.length === 0) { toast('No products selected'); return; }
+
+      showLoading('Submitting claim...');
+      try {
+        const res = await fetch('/api/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...claimData, items })
+        });
+        const data = await res.json();
+        if (data.success) {
+          hideLoading();
+          document.getElementById('success-msg').innerHTML =
+            `<strong>${claimData.shop_name}</strong>'s ${claimData.claim_type} claim<br>has been recorded successfully.<br><br>Claim ID: #${data.id}`;
+          showScreen('success');
+        } else {
+          throw new Error(data.error);
+        }
+      } catch (e) {
+        hideLoading();
+        toast('Error: ' + e.message);
+      }
+    }
+
+    function resetAndGoHome() {
+      claimData = { shop_name: '', town: '', claim_date: new Date().toISOString().split('T')[0], claim_type: '' };
+      quantities = {};
+      document.getElementById('inp-shop').value = '';
+      document.getElementById('inp-town').value = '';
+      document.getElementById('inp-date').value = claimData.claim_date;
+      document.querySelectorAll('.claim-card').forEach(c => c.classList.remove('selected'));
+      document.getElementById('btn-next-claim').disabled = true;
+      updateSelectedCount();
+      rerenderQuantities();
+      showScreen('home');
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       DISTRIBUTOR
+       ═══════════════════════════════════════════════════════════ */
+    async function loginDistributor() {
+      const pw = document.getElementById('inp-password').value;
+      if (!pw) { document.getElementById('login-error').textContent = 'Enter password'; return; }
+
+      showLoading('Verifying...');
+      try {
+        const res = await fetch('/api/submissions', { headers: { 'x-password': pw } });
+        if (res.status === 401) {
+          hideLoading();
+          document.getElementById('login-error').textContent = 'Wrong password. Try again.';
+          return;
+        }
+        distPassword = pw;
+        const data = await res.json();
+        hideLoading();
+        renderDashboard(data);
+        showScreen('dashboard');
+        document.getElementById('login-error').textContent = '';
+      } catch (e) {
+        hideLoading();
+        toast('Connection error');
+      }
+    }
+
+    function renderDashboard(submissions) {
+      // Stats
+      const retailers = new Set(submissions.map(s => s.shop_name));
+      let totalPkts = 0, productCodes = new Set();
+      for (const sub of submissions) {
+        for (const item of sub.items) {
+          totalPkts += item.quantity;
+          productCodes.add(item.code);
+        }
+      }
+      document.getElementById('stat-retailers').textContent = retailers.size;
+      document.getElementById('stat-packets').textContent = totalPkts.toLocaleString();
+      document.getElementById('stat-products').textContent = productCodes.size;
+      document.getElementById('stat-submissions').textContent = submissions.length;
+
+      // Submissions list
+      const container = document.getElementById('submissions-list');
+      if (submissions.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="emoji">📭</div>
+            <p>No submissions yet.<br>Claims from retailers will appear here.</p>
+          </div>`;
+        return;
+      }
+
+      let html = '';
+      for (const sub of submissions) {
+        const itemCount = sub.items.reduce((s, i) => s + i.quantity, 0);
+        const itemNames = sub.items.map(i => `${i.name} (${i.quantity})`).join(', ');
+        const dateStr = new Date(sub.submitted_at).toLocaleString('en-IN', {
+          day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+        html += `
+          <div class="submission-card">
+            <div class="sub-header">
+              <span class="sub-shop">${sub.shop_name}</span>
+              <span class="sub-badge badge-${sub.claim_type}">${sub.claim_type}</span>
+            </div>
+            <div class="sub-meta">📍 ${sub.town} &bull; 📅 ${sub.claim_date} &bull; 🕐 ${dateStr}</div>
+            <div class="sub-items"><strong>${itemCount} pkts</strong> — ${itemNames}</div>
+          </div>`;
+      }
+      container.innerHTML = html;
+    }
+
+    function appendPassword() {
+      document.getElementById('export-pw-hidden').value = distPassword;
+      toast('Starting Excel Download...');
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       UTILITIES
+       ═══════════════════════════════════════════════════════════ */
+    function showLoading(text) {
+      document.getElementById('loading-text').textContent = text || 'Loading...';
+      document.getElementById('loading').classList.add('show');
+    }
+    function hideLoading() {
+      document.getElementById('loading').classList.remove('show');
+    }
+    function toast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
+  </script>
+</body>
+</html>

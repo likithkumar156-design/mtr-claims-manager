@@ -1,0 +1,15 @@
+{
+  "name": "mtr-damage-claims",
+  "version": "1.0.0",
+  "description": "MTR Foods Distributor - Retailer Damage & Expiry Claims Manager",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "exceljs": "^4.4.0",
+    "express": "^4.21.0"
+  }
+}
